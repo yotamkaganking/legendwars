@@ -1,36 +1,31 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>תרום 5 דולר לכתובת Ethereum</title>
-</head>
-<body>
-    <button id="donateButton">תרום 5 דולר</button>
+const Web3 = require('web3');
+const web3 = new Web3('https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID'); // השתמש ב-Infura או ב-URL של הנושא המותקן שלך
 
-    <script>
-        // פונקציה שמתבצעת בעת לחיצה על הכפתור
-        document.getElementById("donateButton").addEventListener("click", async () => {
-            // הכתובת שברצונך לתרום לה
-            const toAddress = "0xbe17C9c4137A40e926A8Bd850d1b04A4c160DFc6";
+// יצירת מפתח פרטי חדש (לשימוש במטרה כלשהי בחוזה)
+const privateKey = web3.eth.accounts.create().privateKey;
 
-            // תחבר את הארנק שלך כאן
+// כתובת חשבון חדשה מתוך המפתח הפרטי
+const account = web3.eth.accounts.privateKeyToAccount(privateKey).address;
 
-            // בדוק אם המשתמש מאושר לבצע פעולה
-            if (window.confirm("האם אתה בטוח שברצונך לתרום 5 דולר?")) {
-                // בצע תרומה
-                try {
-                    // קרוא לארנק שלך ובצע את התרומה
-                    // כאן תצטרך להשתמש בספריית ארנק הקריפטו שלך
-                    const donationResult = await yourCryptoWallet.sendTransaction({
-                        to: toAddress,
-                        value: web3.toWei(5, "ether") // 5 ETH
-                    });
+// הכנס את הקוד של החוזה כאן
+const contractCode = '<הקוד של החוזה החם>';
 
-                    alert("תרומתך התקבלה בהצלחה!");
-                } catch (error) {
-                    alert("התרומה נכשלה: " + error.message);
-                }
-            }
-        });
-    </script>
-</body>
-</html>
+// אופציות פרסום
+const options = {
+    data: '0x' + contractCode,
+    from: account,
+    gas: '2000000', // הכמות המרבית של הגז שנצריך
+};
+
+// יצירת אובייקט חוזה חם
+const contract = new web3.eth.Contract(JSON.parse(contractCode));
+
+// פרסם את החוזה
+contract.deploy(options)
+    .send()
+    .then((deployedContract) => {
+        console.log('כתובת החוזה החם:', deployedContract.options.address);
+    })
+    .catch((error) => {
+        console.error('התרחשה שגיאה:', error);
+    });
