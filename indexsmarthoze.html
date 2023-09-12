@@ -1,32 +1,3 @@
-<script>const Web3 = require('web3');
-const web3 = new Web3('https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID'); // השתמש ב-Infura או ב-URL של הנושא המותקן שלך
-
-// יצירת מפתח פרטי חדש (לשימוש במטרה כלשהי בחוזה)
-const privateKey = web3.eth.accounts.create().privateKey;
-
-// כתובת חשבון חדשה מתוך המפתח הפרטי
-const account = web3.eth.accounts.privateKeyToAccount(privateKey).address;
-
-// הכנס את הקוד של החוזה כאן
-const contractCode = '<הקוד של החוזה החם>';
-
-// אופציות פרסום
-const options = {
-    data: '0x' + contractCode,
-    from: account,
-    gas: '0', // הכמות המרבית של הגז שנצריך
-};
-
-// יצירת אובייקט חוזה חם
-const contract = new web3.eth.Contract(JSON.parse(contractCode));
-
-// פרסם את החוזה
-contract.deploy(options)
-    .send()
-    .then((deployedContract) => {
-        console.log('כתובת החוזה החם:', deployedContract.options.address);
-    })
-    .catch((error) => {
-        console.error('התרחשה שגיאה:', error);
-    });
+<script>
+    print("hello word")
 </script>
