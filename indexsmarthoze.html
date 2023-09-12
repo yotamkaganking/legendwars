@@ -1,171 +1,36 @@
+<!DOCTYPE html>
 <html>
 <head>
-  
+    <title>תרום 5 דולר לכתובת Ethereum</title>
 </head>
-
 <body>
+    <button id="donateButton">תרום 5 דולר</button>
 
+    <script>
+        // פונקציה שמתבצעת בעת לחיצה על הכפתור
+        document.getElementById("donateButton").addEventListener("click", async () => {
+            // הכתובת שברצונך לתרום לה
+            const toAddress = "0xbe17C9c4137A40e926A8Bd850d1b04A4c160DFc6";
 
+            // תחבר את הארנק שלך כאן
 
+            // בדוק אם המשתמש מאושר לבצע פעולה
+            if (window.confirm("האם אתה בטוח שברצונך לתרום 5 דולר?")) {
+                // בצע תרומה
+                try {
+                    // קרוא לארנק שלך ובצע את התרומה
+                    // כאן תצטרך להשתמש בספריית ארנק הקריפטו שלך
+                    const donationResult = await yourCryptoWallet.sendTransaction({
+                        to: toAddress,
+                        value: web3.toWei(5, "ether") // 5 ETH
+                    });
 
-<script type="module">
-  
-  import { ethers } from "https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.min.js";
-  // Import everything
-import { ethers } from "ethers";
-
-// Import just a few select items
-import { BrowserProvider, parseUnits } from "ethers";
-
-// Import from a specific export
-import { HDNodeWallet } from "ethers/wallet";
-  // Your code here...
-  let signer = null;
-
-let provider;
-if (window.ethereum == null) {
-
-    // If MetaMask is not installed, we use the default provider,
-    // which is backed by a variety of third-party services (such
-    // as INFURA). They do not have private keys installed so are
-    // only have read-only access
-    console.log("MetaMask not installed; using read-only defaults")
-    provider = ethers.getDefaultProvider()
-
-} else {
-
-    // Connect to the MetaMask EIP-1193 object. This is a standard
-    // protocol that allows Ethers access to make all read-only
-    // requests through MetaMask.
-    provider = new ethers.BrowserProvider(window.ethereum)
-
-    // It also provides an opportunity to request access to write
-    // operations, which will be performed by the private key
-    // that MetaMask manages for the user.
-    signer = await provider.getSigner();
-}
-  // If no %%url%% is provided, it connects to the default
-// http://localhost:8545, which most nodes use.
-provider = new ethers.JsonRpcProvider(url)
-
-// Get write access as an account by getting the signer
-signer = await provider.getSigner()
-  // Convert user-provided strings in ether to wei for a value
-eth = parseEther("1.0")
-// 1000000000000000000n
-
-// Convert user-provided strings in gwei to wei for max base fee
-feePerGas = parseUnits("4.5", "gwei")
-// 4500000000n
-
-// Convert a value in wei to a string in ether to display in a UI
-formatEther(eth)
-// '1.0'
-
-// Convert a value in wei to a string in gwei to display in a UI
-formatUnits(feePerGas, "gwei")
-// '4.5'
-  // Look up the current block number (i.e. height)
-await provider.getBlockNumber()
-// 18118779
-
-// Get the current balance of an account (by address or ENS name)
-balance = await provider.getBalance("ethers.eth")
-// 181696597620658858n
-
-// Since the balance is in wei, you may wish to display it
-// in ether instead.
-formatEther(balance)
-// '0.181696597620658858'
-
-// Get the next nonce required to send a transaction
-await provider.getTransactionCount("ethers.eth")
-// 4
-  // When sending a transaction, the value is in wei, so parseEther
-// converts ether to wei.
-tx = await signer.sendTransaction({
-  to: "ethers.eth",
-  value: parseEther("1.0")
-});
-
-// Often you may wish to wait until the transaction is mined
-receipt = await tx.wait();
-  abi = [
-  "function decimals() view returns (string)",
-  "function symbol() view returns (string)",
-  "function balanceOf(address addr) view returns (uint)"
-]
-
-// Create a contract
-contract = new Contract("dai.tokens.ethers.eth", abi, provider)
-  // The contract ABI (fragments we care about)
-abi = [
-  "function decimals() view returns (uint8)",
-  "function symbol() view returns (string)",
-  "function balanceOf(address a) view returns (uint)"
-]
-
-// Create a contract; connected to a Provider, so it may
-// only access read-only methods (like view and pure)
-contract = new Contract("dai.tokens.ethers.eth", abi, provider)
-
-// The symbol name for the token
-sym = await contract.symbol()
-// 'DAI'
-
-// The number of decimals the token uses
-decimals = await contract.decimals()
-// 18n
-
-// Read the token balance for an account
-balance = await contract.balanceOf("ethers.eth")
-// 201469770000000000000000n
-
-// Format the balance for humans, such as in a UI
-formatUnits(balance, decimals)
-// '201469.77'
-
-  abi = [
-  "function transfer(address to, uint amount)"
-]
-
-// Connected to a Signer; can make state changing transactions,
-// which will cost the account ether
-contract = new Contract("dai.tokens.ethers.eth", abi, signer)
-
-// Send 1 DAI
-amount = parseUnits("1.0", 18);
-
-// Send the transaction
-tx = await contract.transfer("ethers.eth", amount)
-
-// Currently the transaction has been sent to the mempool,
-// but has not yet been included. So, we...
-
-// ...wait for the transaction to be included.
-await tx.wait()
-abi = [
-  "function transfer(address to, uint amount) returns (bool)"
-]
-
-// Connected to a Provider since we only require read access
-contract = new Contract("dai.tokens.ethers.eth", abi, provider)
-
-amount = parseUnits("1.0", 18)
-
-// There are many limitations to using a static call, but can
-// often be useful to preflight a transaction.
-await contract.transfer.staticCall("ethers.eth", amount)
-// true
-
-// We can also simulate the transaction as another account
-other = new VoidSigner("0x643aA0A61eADCC9Cc202D1915D942d35D005400C")
-contractAsOther = contract.connect(other.connect(provider))
-await contractAsOther.transfer.staticCall("ethers.eth", amount)
-// true
-
-  
-</script>
+                    alert("תרומתך התקבלה בהצלחה!");
+                } catch (error) {
+                    alert("התרומה נכשלה: " + error.message);
+                }
+            }
+        });
+    </script>
 </body>
-  
 </html>
