@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>אתר מוגן בסיסמה</title>
+    <title>אתר מוגן בסיסמה עם שמירת לינקים</title>
 </head>
 <body>
-    <h1>אתר מוגן בסיסמה</h1>
+    <h1>אתר מוגן בסיסמה עם שמירת לינקים</h1>
     <form id="passwordForm">
         <label for="password">הכנס סיסמה:</label>
         <input type="password" id="password" required>
@@ -12,7 +12,7 @@
     </form>
 
     <div id="content" style="display:none;">
-        <!-- כאן תוכל להוסיף לינקים ולמחוקם -->
+        <!-- כאן תוכל להוסיף לינקים ולשמור אותם -->
         <h2>תוכן אפשרי:</h2>
         <ul id="linksList">
         </ul>
@@ -24,13 +24,16 @@
     </div>
 
     <script>
-        const password = "123"; // סיסמה קשה קוד - שנמצא בלבד בתוך הדוגמה
+        const password = "mypassword"; // סיסמה קשה קוד - שנמצא בלבד בתוך הדוגמה
 
         function checkPassword() {
             const inputPassword = document.getElementById("password").value;
             if (inputPassword === password) {
                 document.getElementById("passwordForm").style.display = "none";
                 document.getElementById("content").style.display = "block";
+
+                // הצג לינקים מLocalStorage
+                displayLinks();
             } else {
                 alert("סיסמה שגויה. אנא נסה שוב.");
             }
@@ -40,38 +43,63 @@
             const newLinkInput = document.getElementById("newLink");
             const newLink = newLinkInput.value.trim();
             if (newLink) {
-                const linksList = document.getElementById("linksList");
+                // הוסף לינק לLocalStorage
+                addLink(newLink);
+
+                // הצג לינקים
+                displayLinks();
+
+                newLinkInput.value = "";
+            }
+        }
+
+        function addLink(link) {
+            const links = getLinks();
+            links.push(link);
+            localStorage.setItem("links", JSON.stringify(links));
+        }
+
+        function deleteLink(link) {
+            const links = getLinks();
+            const index = links.indexOf(link);
+            if (index !== -1) {
+                links.splice(index, 1);
+                localStorage.setItem("links", JSON.stringify(links));
+                displayLinks();
+            }
+        }
+
+        function getLinks() {
+            const linksString = localStorage.getItem("links") || "[]";
+            return JSON.parse(linksString);
+        }
+
+        function displayLinks() {
+            const linksList = document.getElementById("linksList");
+            const links = getLinks();
+
+            // נקה את הרשימה
+            while (linksList.firstChild) {
+                linksList.removeChild(linksList.firstChild);
+            }
+
+            // הצג את הלינקים
+            links.forEach(function(link) {
                 const listItem = document.createElement("li");
                 const linkElement = document.createElement("a");
-                linkElement.href = newLink;
-                linkElement.textContent = newLink;
+                linkElement.href = link;
+                linkElement.textContent = link;
                 listItem.appendChild(linkElement);
 
                 const deleteButton = document.createElement("button");
                 deleteButton.textContent = "מחק";
                 deleteButton.onclick = function() {
-                    deleteLink(newLink);
+                    deleteLink(link);
                 };
                 listItem.appendChild(deleteButton);
 
                 linksList.appendChild(listItem);
-                newLinkInput.value = "";
-            }
-        }
-
-        function deleteLink(link) {
-            const inputPassword = prompt("הכנס סיסמה למחיקת הלינק:");
-            if (inputPassword === password) {
-                const linkElement = document.querySelector(`a[href="${link}"]`);
-                if (linkElement) {
-                    const listItem = linkElement.parentElement;
-                    listItem.parentNode.removeChild(listItem);
-                } else {
-                    alert("קישור לא נמצא.");
-                }
-            } else {
-                alert("סיסמה שגויה. אנא נסה שוב.");
-            }
+            });
         }
     </script>
 </body>
