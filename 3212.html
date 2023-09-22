@@ -52,11 +52,6 @@
             }
 
             if (newLink) {
-                const linksList = document.getElementById("linksList");
-                const listItem = document.createElement("li");
-                listItem.textContent = newLink;
-                linksList.appendChild(listItem);
-
                 // שמור את הלינק ב-Firebase Firestore
                 saveLink(newLink);
 
