@@ -35,9 +35,44 @@
             }
         }
 
-        function uploadFiles() {
-            // כאן תוכל להעלות את הקבצים ולהציג קישורים להורדתם ב<div id="downloadLinks">
-        }
+function uploadFiles() {
+    const filesInput = document.getElementById("upload");
+    const files = filesInput.files;
+
+    // כאן תוכל לעבור על רשימת הקבצים ולהעלות אותם לשרת
+    // וליצור קישורים להורדתם ב<div id="downloadLinks">
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        // אפשר להשתמש ב-XMLHttpRequest או ב-Fetch API כדי להעלות את הקבצים לשרת
+        // לדוגמה, אם אתה משתמש ב-Fetch API:
+        const formData = new FormData();
+        formData.append("file", file);
+
+        fetch("/upload.php", {
+            method: "POST",
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // העלאת הקובץ הצליחה, כאן תוכל להוסיף את הקישור לקובץ ב<div id="downloadLinks">
+                const downloadLinks = document.getElementById("downloadLinks");
+                const downloadLink = document.createElement("a");
+                downloadLink.href = data.filePath;
+                downloadLink.textContent = file.name;
+                downloadLink.download = file.name;
+                downloadLinks.appendChild(downloadLink);
+                downloadLinks.appendChild(document.createElement("br"));
+            } else {
+                alert("שגיאה בהעלאת הקובץ: " + data.error);
+            }
+        })
+        .catch(error => {
+            console.error("שגיאה בבקשת ההעלאה: ", error);
+        });
+    }
+}
+
     </script>
 </body>
 </html>
