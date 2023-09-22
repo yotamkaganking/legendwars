@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>הגשת קבצים</title>
+</head>
+<body>
+    <h1>הגשת קבצים</h1>
+    <form id="passwordForm">
+        <label for="password">הכנס סיסמה:</label>
+        <input type="password" id="password" name="password" required>
+        <button type="submit">שלח</button>
+    </form>
+
+    <div id="fileUpload" style="display:none;">
+        <h2>העלה קבצים:</h2>
+        <input type="file" id="upload" name="upload" multiple>
+        <button id="uploadButton">העלה</button>
+    </div>
+
+    <div id="downloadLinks" style="display:none;">
+        <h2>קבצים להורדה:</h2>
+        <!-- כאן יופיעו הקישורים לקבצים -->
+    </div>
+
+    <script>
+        document.getElementById("passwordForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const password = document.getElementById("password").value;
+
+            // כאן אתה יכול לבדוק את הסיסמה. זו רק דוגמה:
+            if (password === "mypassword") {
+                document.getElementById("passwordForm").style.display = "123";
+                document.getElementById("fileUpload").style.display = "block";
+            } else {
+                alert("סיסמה שגויה. אנא נסה שוב.");
+            }
+        });
+
+        document.getElementById("uploadButton").addEventListener("click", function() {
+            // כאן תוכל להעלות את הקבצים לשרת
+            // ולהציג קישורים להורדתם ב<div id="downloadLinks">
+        });
+    </script>
+</body>
+</html>
