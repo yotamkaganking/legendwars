@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>אתר עם סיסמה</title>
+    <title>אתר עם סיסמה ולינק</title>
 </head>
 <body>
-    <h1>אתר עם סיסמה</h1>
+    <h1>אתר עם סיסמה ואפשרות להוסיף לינק</h1>
 
     <!-- טופס לסיסמה -->
     <form id="passwordForm">
@@ -18,7 +18,6 @@
         <label for="textInput">הזן טקסט:</label>
         <input type="text" id="textInput" required>
         <button type="button" id="saveButton">שמור</button>
-        <button type="button" id="deleteButton">מחק</button>
     </form>
 
     <!-- תצוגת הטקסט -->
@@ -27,16 +26,22 @@
         <p id="savedText"></p>
     </div>
 
+    <!-- לינק לטקסט -->
+    <div id="linkDiv" style="display: none;">
+        <h2>לינק לטקסט:</h2>
+        <a id="textLink" href="#" target="_blank">טקסט</a>
+    </div>
+
     <script>
-        // סיסמה קבועה (שים לב שזו לא דרך בטוחה לשמור סיסמאות)
-        const correctPassword = "הסיסמה";
+        const correctPassword = "c-vq;|1A8lhe(9?.b\\i0|GZ}]gb=3rzm;5{@!Uqw7Ki5Lk$~W;"; // סיסמה קבועה
 
         const passwordForm = document.getElementById("passwordForm");
         const textInputForm = document.getElementById("textInputForm");
         const saveButton = document.getElementById("saveButton");
-        const deleteButton = document.getElementById("deleteButton");
         const displayText = document.getElementById("displayText");
         const savedText = document.getElementById("savedText");
+        const linkDiv = document.getElementById("linkDiv");
+        const textLink = document.getElementById("textLink");
 
         passwordForm.addEventListener("submit", function (event) {
             event.preventDefault();
@@ -54,23 +59,21 @@
             const textInput = document.getElementById("textInput");
             localStorage.setItem("savedText", textInput.value);
             alert("הטקסט נשמר בהצלחה!");
-        });
-
-        deleteButton.addEventListener("click", function () {
-            localStorage.removeItem("savedText");
-            alert("הטקסט נמחק בהצלחה!");
-            textInputForm.style.display = "none";
-            displayText.style.display = "none";
-            passwordForm.style.display = "block";
-            document.getElementById("password").value = "";
+            savedText.textContent = textInput.value;
+            linkDiv.style.display = "block";
+            textLink.href = textInput.value;
+            textLink.textContent = "לינק לטקסט";
         });
 
         // בדוק אם יש טקסט שנשמר מאחרים
         const storedText = localStorage.getItem("savedText");
         if (storedText) {
             savedText.textContent = storedText;
-            displayText.style.display = "block";
+            linkDiv.style.display = "block";
+            textLink.href = storedText;
+            textLink.textContent = "לינק לטקסט";
             textInputForm.style.display = "none";
+            displayText.style.display = "block";
         }
     </script>
 </body>
