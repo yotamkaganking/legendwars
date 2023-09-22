@@ -1,78 +1,53 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>הגשת קבצים</title>
+    <title>אתר מוגן בסיסמה</title>
 </head>
 <body>
-    <h1>הגשת קבצים</h1>
-    <div>
+    <h1>אתר מוגן בסיסמה</h1>
+    <form id="passwordForm">
         <label for="password">הכנס סיסמה:</label>
         <input type="password" id="password" required>
-        <button onclick="checkPassword()">שלח</button>
-    </div>
+        <button type="button" onclick="checkPassword()">שלח</button>
+    </form>
 
-    <div id="fileUpload" style="display:none;">
-        <h2>העלה קבצים:</h2>
-        <input type="file" id="upload" multiple>
-        <button onclick="uploadFiles()">העלה</button>
-    </div>
-
-    <div id="downloadLinks" style="display:none;">
-        <h2>קבצים להורדה:</h2>
-        <!-- כאן יופיעו הקישורים לקבצים -->
+    <div id="content" style="display:none;">
+        <!-- כאן תוכל להוסיף קישורים לתוך התוכן -->
+        <h2>תוכן אפשרי:</h2>
+        <ul id="linksList">
+            <li><a href="link1.html">לינק 1</a> <button onclick="deleteLink('link1.html')">מחק</button></li>
+            <li><a href="link2.html">לינק 2</a> <button onclick="deleteLink('link2.html')">מחק</button></li>
+            <li><a href="link3.html">לינק 3</a> <button onclick="deleteLink('link3.html')">מחק</button></li>
+        </ul>
     </div>
 
     <script>
-        let password = "123"; // סיסמה קשה קוד - שנמצא בלבד בתוך הדוגמה
+        const password = "123"; // סיסמה קשה קוד - שנמצא בלבד בתוך הדוגמה
 
         function checkPassword() {
             const inputPassword = document.getElementById("password").value;
             if (inputPassword === password) {
-                document.getElementById("password").style.display = "none";
-                document.getElementById("fileUpload").style.display = "block";
+                document.getElementById("passwordForm").style.display = "none";
+                document.getElementById("content").style.display = "block";
             } else {
                 alert("סיסמה שגויה. אנא נסה שוב.");
             }
         }
 
-function uploadFiles() {
-    const filesInput = document.getElementById("upload");
-    const files = filesInput.files;
-
-    // כאן תוכל לעבור על רשימת הקבצים ולהעלות אותם לשרת
-    // וליצור קישורים להורדתם ב<div id="downloadLinks">
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        // אפשר להשתמש ב-XMLHttpRequest או ב-Fetch API כדי להעלות את הקבצים לשרת
-        // לדוגמה, אם אתה משתמש ב-Fetch API:
-        const formData = new FormData();
-        formData.append("file", file);
-
-        fetch("/upload.php", {
-            method: "POST",
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // העלאת הקובץ הצליחה, כאן תוכל להוסיף את הקישור לקובץ ב<div id="downloadLinks">
-                const downloadLinks = document.getElementById("downloadLinks");
-                const downloadLink = document.createElement("a");
-                downloadLink.href = data.filePath;
-                downloadLink.textContent = file.name;
-                downloadLink.download = file.name;
-                downloadLinks.appendChild(downloadLink);
-                downloadLinks.appendChild(document.createElement("br"));
+        function deleteLink(link) {
+            const inputPassword = prompt("הכנס סיסמה למחיקת הקישור:");
+            if (inputPassword === password) {
+                const linkElement = document.querySelector(`a[href="${link}"]`);
+                if (linkElement) {
+                    const listItem = linkElement.parentElement;
+                    listItem.parentNode.removeChild(listItem);
+                } else {
+                    alert("קישור לא נמצא.");
+                }
             } else {
-                alert("שגיאה בהעלאת הקובץ: " + data.error);
+                alert("סיסמה שגויה. אנא נסה שוב.");
             }
-        })
-        .catch(error => {
-            console.error("שגיאה בבקשת ההעלאה: ", error);
-        });
-    }
-}
-
+        }
     </script>
 </body>
 </html>
