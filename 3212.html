@@ -1,96 +1,77 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>אתר עם שמירת לינקים ב-Firebase וסיסמה</title>
+    <title>אתר עם סיסמה</title>
 </head>
 <body>
-    <h1>אתר עם שמירת לינקים ב-Firebase וסיסמה</h1>
-    
-    <div id="content">
-        <h2>לינקים שנשמרו:</h2>
-        <ul id="linksList">
-        </ul>
+    <h1>אתר עם סיסמה</h1>
+
+    <!-- טופס לסיסמה -->
+    <form id="passwordForm">
+        <label for="password">הזן סיסמה:</label>
+        <input type="password" id="password" required>
+        <button type="submit">כניסה</button>
+    </form>
+
+    <!-- טופס לכתיבת טקסט -->
+    <form id="textInputForm" style="display: none;">
+        <label for="textInput">הזן טקסט:</label>
+        <input type="text" id="textInput" required>
+        <button type="button" id="saveButton">שמור</button>
+        <button type="button" id="deleteButton">מחק</button>
+    </form>
+
+    <!-- תצוגת הטקסט -->
+    <div id="displayText" style="display: none;">
+        <h2>הטקסט שנשמר:</h2>
+        <p id="savedText"></p>
     </div>
 
-    <h2>הוסף לינק:</h2>
-    <label for="newLink">כתובת הלינק:</label>
-    <input type="text" id="newLink" required>
-    <br>
-    <label for="password">סיסמה:</label>
-    <input type="password" id="password" required>
-    <button type="button" onclick="addLink()">הוסף לינק</button>
-
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
     <script>
-        // אין לשכוח להשלים את ההגדרות בהתאם להגדרות הפרוייקט שלך ב-Firebase
-        const firebaseConfig = {
-            apiKey: "AAAAssVI4I0:APA91bHahhsNaolubCT3FSNzqOv98FFR5I7WDUWMmYXsHBwUxvrLSIa4CZzNmyvtX-IAr8pPDsMkpLq5kr0tMZ9WqeGhUVCk5wyP0X6fEFcjD-34S2Tv703A-6p6nDS8qYYa-qfChx7U",
-            authDomain: "https://console.firebase.google.com/project/lymkanftlandlinks",
-            projectId: "lymkanftlandlinks",
-            storageBucket: "gs://lymkanftlandlinks.appspot.com",
-            messagingSenderId: "https://console.firebase.google.com/project/lymkanftlandlinks/storage",
-            appId: "AAAAssVI4I0:APA91bHahhsNaolubCT3FSNzqOv98FFR5I7WDUWMmYXsHBwUxvrLSIa4CZzNmyvtX-IAr8pPDsMkpLq5kr0tMZ9WqeGhUVCk5wyP0X6fEFcjD-34S2Tv703A-6p6nDS8qYYa-qfChx7U"
-        };
+        // סיסמה קבועה (שים לב שזו לא דרך בטוחה לשמור סיסמאות)
+        const correctPassword = "הסיסמה";
 
-        // אתחול Firebase
-        firebase.initializeApp(firebaseConfig);
+        const passwordForm = document.getElementById("passwordForm");
+        const textInputForm = document.getElementById("textInputForm");
+        const saveButton = document.getElementById("saveButton");
+        const deleteButton = document.getElementById("deleteButton");
+        const displayText = document.getElementById("displayText");
+        const savedText = document.getElementById("savedText");
 
-        const db = firebase.firestore();
-
-        function addLink() {
-            const newLinkInput = document.getElementById("newLink");
-            const newLink = newLinkInput.value.trim();
+        passwordForm.addEventListener("submit", function (event) {
+            event.preventDefault();
             const passwordInput = document.getElementById("password");
-            const password = passwordInput.value;
-
-            // בדיקה אם הסיסמה נכונה
-            if (password !== "123") {
+            if (passwordInput.value === correctPassword) {
+                passwordForm.style.display = "none";
+                textInputForm.style.display = "block";
+            } else {
                 alert("סיסמה שגויה. אנא נסה שוב.");
-                return;
-            }
-
-            if (newLink) {
-                // שמור את הלינק ב-Firebase Firestore
-                saveLink(newLink);
-
-                newLinkInput.value = "";
                 passwordInput.value = "";
             }
+        });
+
+        saveButton.addEventListener("click", function () {
+            const textInput = document.getElementById("textInput");
+            localStorage.setItem("savedText", textInput.value);
+            alert("הטקסט נשמר בהצלחה!");
+        });
+
+        deleteButton.addEventListener("click", function () {
+            localStorage.removeItem("savedText");
+            alert("הטקסט נמחק בהצלחה!");
+            textInputForm.style.display = "none";
+            displayText.style.display = "none";
+            passwordForm.style.display = "block";
+            document.getElementById("password").value = "";
+        });
+
+        // בדוק אם יש טקסט שנשמר מאחרים
+        const storedText = localStorage.getItem("savedText");
+        if (storedText) {
+            savedText.textContent = storedText;
+            displayText.style.display = "block";
+            textInputForm.style.display = "none";
         }
-
-        function saveLink(link) {
-            db.collection("links").add({
-                link: link
-            })
-            .then(function(docRef) {
-                console.log("Document written with ID: ", docRef.id);
-            })
-            .catch(function(error) {
-                console.error("Error adding document: ", error);
-            });
-        }
-
-        function loadLinks() {
-            const linksList = document.getElementById("linksList");
-
-            db.collection("links").onSnapshot(function(querySnapshot) {
-                // נקה את הרשימה
-                while (linksList.firstChild) {
-                    linksList.removeChild(linksList.firstChild);
-                }
-
-                querySnapshot.forEach(function(doc) {
-                    const listItem = document.createElement("li");
-                    listItem.textContent = doc.data().link;
-                    linksList.appendChild(listItem);
-                });
-            });
-        }
-
-        // טען את הלינקים מ-Firebase Firestore בעת טעינת הדף
-        loadLinks();
     </script>
 </body>
 </html>
