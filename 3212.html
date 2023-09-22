@@ -1,107 +1,101 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>אתר מוגן בסיסמה עם שמירת לינקים</title>
+    <title>אתר עם שמירת לינקים ב-Firebase וסיסמה</title>
 </head>
 <body>
-    <h1>אתר מוגן בסיסמה עם שמירת לינקים</h1>
-    <form id="passwordForm">
-        <label for="password">הכנס סיסמה:</label>
-        <input type="password" id="password" required>
-        <button type="button" onclick="checkPassword()">שלח</button>
-    </form>
-
-    <div id="content" style="display:none;">
-        <!-- כאן תוכל להוסיף לינקים ולשמור אותם -->
-        <h2>תוכן אפשרי:</h2>
+    <h1>אתר עם שמירת לינקים ב-Firebase וסיסמה</h1>
+    
+    <div id="content">
+        <h2>לינקים שנשמרו:</h2>
         <ul id="linksList">
         </ul>
-
-        <h2>צור לינק חדש:</h2>
-        <label for="newLink">כתובת הלינק:</label>
-        <input type="text" id="newLink" required>
-        <button type="button" onclick="createLink()">צור לינק</button>
     </div>
 
+    <h2>הוסף לינק:</h2>
+    <label for="newLink">כתובת הלינק:</label>
+    <input type="text" id="newLink" required>
+    <br>
+    <label for="password">סיסמה:</label>
+    <input type="password" id="password" required>
+    <button type="button" onclick="addLink()">הוסף לינק</button>
+
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
     <script>
-        const password = "123"; // סיסמה קשה קוד - שנמצא בלבד בתוך הדוגמה
+        // אין לשכוח להשלים את ההגדרות בהתאם להגדרות הפרוייקט שלך ב-Firebase
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
 
-        function checkPassword() {
-            const inputPassword = document.getElementById("password").value;
-            if (inputPassword === password) {
-                document.getElementById("passwordForm").style.display = "none";
-                document.getElementById("content").style.display = "block";
+        // אתחול Firebase
+        firebase.initializeApp(firebaseConfig);
 
-                // הצג לינקים מLocalStorage
-                displayLinks();
-            } else {
-                alert("סיסמה שגויה. אנא נסה שוב.");
-            }
-        }
+        const db = firebase.firestore();
 
-        function createLink() {
+        function addLink() {
             const newLinkInput = document.getElementById("newLink");
             const newLink = newLinkInput.value.trim();
-            if (newLink) {
-                // הוסף לינק לLocalStorage
-                addLink(newLink);
+            const passwordInput = document.getElementById("password");
+            const password = passwordInput.value;
 
-                // הצג לינקים
-                displayLinks();
+            // בדיקה אם הסיסמה נכונה
+            if (password !== "123") {
+                alert("סיסמה שגויה. אנא נסה שוב.");
+                return;
+            }
+
+            if (newLink) {
+                const linksList = document.getElementById("linksList");
+                const listItem = document.createElement("li");
+                listItem.textContent = newLink;
+                linksList.appendChild(listItem);
+
+                // שמור את הלינק ב-Firebase Firestore
+                saveLink(newLink);
 
                 newLinkInput.value = "";
+                passwordInput.value = "";
             }
         }
 
-        function addLink(link) {
-            const links = getLinks();
-            links.push(link);
-            localStorage.setItem("links", JSON.stringify(links));
-        }
-
-        function deleteLink(link) {
-            const links = getLinks();
-            const index = links.indexOf(link);
-            if (index !== -1) {
-                links.splice(index, 1);
-                localStorage.setItem("links", JSON.stringify(links));
-                displayLinks();
-            }
-        }
-
-        function getLinks() {
-            const linksString = localStorage.getItem("links") || "[]";
-            return JSON.parse(linksString);
-        }
-
-        function displayLinks() {
-            const linksList = document.getElementById("linksList");
-            const links = getLinks();
-
-            // נקה את הרשימה
-            while (linksList.firstChild) {
-                linksList.removeChild(linksList.firstChild);
-            }
-
-            // הצג את הלינקים
-            links.forEach(function(link) {
-                const listItem = document.createElement("li");
-                const linkElement = document.createElement("a");
-                linkElement.href = "javascript:void(0);"; // מנע ניווט בלחיצה
-                linkElement.textContent = link;
-
-                const deleteButton = document.createElement("button");
-                deleteButton.textContent = "מחק";
-                deleteButton.onclick = function() {
-                    deleteLink(link);
-                };
-
-                listItem.appendChild(linkElement);
-                listItem.appendChild(deleteButton);
-
-                linksList.appendChild(listItem);
+        function saveLink(link) {
+            db.collection("links").add({
+                link: link
+            })
+            .then(function(docRef) {
+                console.log("Document written with ID: ", docRef.id);
+            })
+            .catch(function(error) {
+                console.error("Error adding document: ", error);
             });
         }
+
+        function loadLinks() {
+            const linksList = document.getElementById("linksList");
+
+            db.collection("links").onSnapshot(function(querySnapshot) {
+                // נקה את הרשימה
+                while (linksList.firstChild) {
+                    linksList.removeChild(linksList.firstChild);
+                }
+
+                querySnapshot.forEach(function(doc) {
+                    const listItem = document.createElement("li");
+                    listItem.textContent = doc.data().link;
+                    linksList.appendChild(listItem);
+                });
+            });
+        }
+
+        // טען את הלינקים מ-Firebase Firestore בעת טעינת הדף
+        loadLinks();
     </script>
 </body>
 </html>
