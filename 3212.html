@@ -12,13 +12,15 @@
     </form>
 
     <div id="content" style="display:none;">
-        <!-- כאן תוכל להוסיף קישורים לתוך התוכן -->
+        <!-- כאן תוכל להוסיף לינקים ולמחוקם -->
         <h2>תוכן אפשרי:</h2>
         <ul id="linksList">
-            <li><a href="link1.html">לינק 1</a> <button onclick="deleteLink('link1.html')">מחק</button></li>
-            <li><a href="link2.html">לינק 2</a> <button onclick="deleteLink('link2.html')">מחק</button></li>
-            <li><a href="link3.html">לינק 3</a> <button onclick="deleteLink('link3.html')">מחק</button></li>
         </ul>
+
+        <h2>צור לינק חדש:</h2>
+        <label for="newLink">כתובת הלינק:</label>
+        <input type="text" id="newLink" required>
+        <button type="button" onclick="createLink()">צור לינק</button>
     </div>
 
     <script>
@@ -34,8 +36,31 @@
             }
         }
 
+        function createLink() {
+            const newLinkInput = document.getElementById("newLink");
+            const newLink = newLinkInput.value.trim();
+            if (newLink) {
+                const linksList = document.getElementById("linksList");
+                const listItem = document.createElement("li");
+                const linkElement = document.createElement("a");
+                linkElement.href = newLink;
+                linkElement.textContent = newLink;
+                listItem.appendChild(linkElement);
+
+                const deleteButton = document.createElement("button");
+                deleteButton.textContent = "מחק";
+                deleteButton.onclick = function() {
+                    deleteLink(newLink);
+                };
+                listItem.appendChild(deleteButton);
+
+                linksList.appendChild(listItem);
+                newLinkInput.value = "";
+            }
+        }
+
         function deleteLink(link) {
-            const inputPassword = prompt("הכנס סיסמה למחיקת הקישור:");
+            const inputPassword = prompt("הכנס סיסמה למחיקת הלינק:");
             if (inputPassword === password) {
                 const linkElement = document.querySelector(`a[href="${link}"]`);
                 if (linkElement) {
