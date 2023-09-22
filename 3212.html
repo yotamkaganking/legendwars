@@ -24,7 +24,7 @@
     </div>
 
     <script>
-        const password = "mypassword"; // סיסמה קשה קוד - שנמצא בלבד בתוך הדוגמה
+        const password = "123"; // סיסמה קשה קוד - שנמצא בלבד בתוך הדוגמה
 
         function checkPassword() {
             const inputPassword = document.getElementById("password").value;
@@ -87,15 +87,16 @@
             links.forEach(function(link) {
                 const listItem = document.createElement("li");
                 const linkElement = document.createElement("a");
-                linkElement.href = link;
+                linkElement.href = "javascript:void(0);"; // מנע ניווט בלחיצה
                 linkElement.textContent = link;
-                listItem.appendChild(linkElement);
 
                 const deleteButton = document.createElement("button");
                 deleteButton.textContent = "מחק";
                 deleteButton.onclick = function() {
                     deleteLink(link);
                 };
+
+                listItem.appendChild(linkElement);
                 listItem.appendChild(deleteButton);
 
                 linksList.appendChild(listItem);
