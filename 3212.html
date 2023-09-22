@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>אתר עם סיסמה ולינק</title>
+    <title>אתר עם סיסמה, הוספת ומחיקת טקסטים</title>
 </head>
 <body>
-    <h1>אתר עם סיסמה ואפשרות להוסיף לינק</h1>
+    <h1>אתר עם סיסמה, הוספת ומחיקת טקסטים</h1>
 
     <!-- טופס לסיסמה -->
     <form id="passwordForm">
@@ -13,35 +13,36 @@
         <button type="submit">כניסה</button>
     </form>
 
-    <!-- טופס לכתיבת טקסט -->
+    <!-- טופס להוספת טקסט -->
     <form id="textInputForm" style="display: none;">
         <label for="textInput">הזן טקסט:</label>
         <input type="text" id="textInput" required>
         <button type="button" id="saveButton">שמור</button>
     </form>
 
-    <!-- תצוגת הטקסט -->
-    <div id="displayText" style="display: none;">
-        <h2>הטקסט שנשמר:</h2>
-        <p id="savedText"></p>
+    <!-- רשימת הטקסטים -->
+    <div id="textList" style="display: none;">
+        <h2>רשימת הטקסטים:</h2>
+        <ul id="textUl"></ul>
     </div>
 
-    <!-- לינק לטקסט -->
-    <div id="linkDiv" style="display: none;">
-        <h2>לינק לטקסט:</h2>
-        <a id="textLink" href="#" target="_blank">טקסט</a>
-    </div>
+    <!-- טופס למחיקת טקסט עם סיסמה -->
+    <form id="deleteForm" style="display: none;">
+        <label for="deletePassword">הזן את הסיסמה למחיקה:</label>
+        <input type="password" id="deletePassword" required>
+        <button type="submit">מחק טקסט</button>
+    </form>
 
     <script>
         const correctPassword = "c-vq;|1A8lhe(9?.b\\i0|GZ}]gb=3rzm;5{@!Uqw7Ki5Lk$~W;"; // סיסמה קבועה
+        const texts = []; // מערך לשמירת הטקסטים
 
         const passwordForm = document.getElementById("passwordForm");
         const textInputForm = document.getElementById("textInputForm");
+        const textList = document.getElementById("textList");
+        const textUl = document.getElementById("textUl");
         const saveButton = document.getElementById("saveButton");
-        const displayText = document.getElementById("displayText");
-        const savedText = document.getElementById("savedText");
-        const linkDiv = document.getElementById("linkDiv");
-        const textLink = document.getElementById("textLink");
+        const deleteForm = document.getElementById("deleteForm");
 
         passwordForm.addEventListener("submit", function (event) {
             event.preventDefault();
@@ -49,6 +50,9 @@
             if (passwordInput.value === correctPassword) {
                 passwordForm.style.display = "none";
                 textInputForm.style.display = "block";
+                textList.style.display = "block";
+                deleteForm.style.display = "block";
+                displayTextList();
             } else {
                 alert("סיסמה שגויה. אנא נסה שוב.");
                 passwordInput.value = "";
@@ -57,24 +61,43 @@
 
         saveButton.addEventListener("click", function () {
             const textInput = document.getElementById("textInput");
-            localStorage.setItem("savedText", textInput.value);
-            alert("הטקסט נשמר בהצלחה!");
-            savedText.textContent = textInput.value;
-            linkDiv.style.display = "block";
-            textLink.href = textInput.value;
-            textLink.textContent = "לינק לטקסט";
+            const text = textInput.value;
+            texts.push(text);
+            textInput.value = "";
+            displayTextList();
         });
 
-        // בדוק אם יש טקסט שנשמר מאחרים
-        const storedText = localStorage.getItem("savedText");
-        if (storedText) {
-            savedText.textContent = storedText;
-            linkDiv.style.display = "block";
-            textLink.href = storedText;
-            textLink.textContent = "לינק לטקסט";
-            textInputForm.style.display = "none";
-            displayText.style.display = "block";
+        function displayTextList() {
+            const textUl = document.getElementById("textUl");
+            textUl.innerHTML = "";
+            texts.forEach(function (text, index) {
+                const listItem = document.createElement("li");
+                listItem.textContent = text;
+                textUl.appendChild(listItem);
+            });
         }
+
+        deleteForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+            const deletePasswordInput = document.getElementById("deletePassword");
+            if (deletePasswordInput.value === correctPassword) {
+                deletePasswordInput.value = "";
+                const textIndex = prompt("בחר את הטקסט שברצונך למחוק (הזן מספר):");
+                if (textIndex !== null) {
+                    const index = parseInt(textIndex);
+                    if (!isNaN(index) && index >= 0 && index < texts.length) {
+                        texts.splice(index, 1);
+                        displayTextList();
+                        alert("הטקסט נמחק בהצלחה!");
+                    } else {
+                        alert("מספר לא חוקי.");
+                    }
+                }
+            } else {
+                alert("סיסמה שגויה. אנא נסה שוב.");
+                deletePasswordInput.value = "";
+            }
+        });
     </script>
 </body>
 </html>
