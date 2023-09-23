@@ -16,7 +16,7 @@ async function connectToWallet() {
             await window.ethereum.request({ method: "eth_requestAccounts" });
             // Wallet connected successfully
         } catch (error) {
-            // Handle connection error
+           alert(eror)
         }
     } else {
         // Wallet not detected, prompt user to install one
@@ -30,9 +30,9 @@ const contract = new web3.eth.Contract(contractAbi, contractAddress);
 const owner = await contract.methods.ownerOf(tokenId).call();
 
 if (owner === userWalletAddress) {
-    // User owns the NFT
+    alert(yes)
 } else {
-    // User does not own the NFT
+    alert(no)
 }
 
 </script>
