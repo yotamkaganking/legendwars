@@ -92,5 +92,42 @@
             </form>
         </section>
     </main>
+    <script>const Web3 = require('web3');
+const web3 = new Web3('YOUR_ETHEREUM_NODE_URL'); // ציין את כתובת הגאווה שלך כאן
+
+const nftContractAddress = 'CONTRACT_ADDRESS_OF_NFT'; // כתובת החוכמה של ה-NFT
+const tokenIDToCheck = '85981471250526994033607020071111650266012072695229443008409035258682425837216'; // ה-Token ID לבדיקה
+const userAddressToCheck = 'USER_ETHEREUM_ADDRESS'; // כתובת Ethereum של המשתמש לבדיקה
+
+const abi = [ // ABI של חוכמת ה-NFT
+    {
+        "constant": true,
+        "inputs": [
+            {"name": "_owner", "type": "address"},
+            {"name": "_tokenId", "type": "uint256"}
+        ],
+        "name": "ownerOf",
+        "outputs": [{"name": "owner", "type": "address"}],
+        "type": "function"
+    }
+];
+
+const nftContract = new web3.eth.Contract(abi, nftContractAddress);
+
+async function checkNFTOwnership() {
+    try {
+        const owner = await nftContract.methods.ownerOf(tokenIDToCheck).call();
+        if (owner.toLowerCase() === userAddressToCheck.toLowerCase()) {
+            console.log('המשתמש מחזיק ב-NFT עם ה-Token ID שצוין.');
+        } else {
+            console.log('המשתמש לא מחזיק ב-NFT עם ה-Token ID שצוין.');
+        }
+    } catch (error) {
+        console.error('שגיאה בבדיקת ה-NFT:', error);
+    }
+}
+
+checkNFTOwnership();
+</script>
 </body>
 </html>
