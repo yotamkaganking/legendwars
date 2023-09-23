@@ -1,41 +1,8 @@
-<!DOCTYPE html>
 <html>
-<head>
-    <title>NFT Checker</title>
-</head>
-<body>
-    <!-- Your website content goes here -->
-    <button id="connectWallet">Connect Wallet</button>
-
-    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
-    <script>document.getElementById("connectWallet").addEventListener("click", connectToWallet);
-
-async function connectToWallet() {
-    if (typeof window.ethereum !== "undefined") {
-        try {
-            await window.ethereum.request({ method: "eth_requestAccounts" });
-            // Wallet connected successfully
-        } catch (error) {
-           alert(eror)
-        }
-    } else {
-        // Wallet not detected, prompt user to install one
-    }
-}
-        // Use Web3.js to check NFT ownership
-const contractAddress = 0x495f947276749Ce646f68AC8c248420045cb7b5e";
-const tokenId = "85981471250526994033607020071111650266012072695229443008409035258682425837216"; // Replace with the specific token ID you're checking
-
-const contract = new web3.eth.Contract(contractAbi, contractAddress);
-const owner = await contract.methods.ownerOf(tokenId).call();
-
-if (owner === userWalletAddress) {
-    alert(yes)
-} else {
-    alert(no)
-}
-
-</script>
-
-</body>
+    <haed>
+        
+    </haed>
+    <body>
+        <a href="https://opensea.io/assets/ethereum/0x495f947276749ce646f68ac8c248420045cb7b5e/85981471250526994033607020071111650266012072695229443008409035256483402481665"><img src="https://i.seadn.io/gcs/files/edfc17bc369575af6fc91d087bf41569.png?auto=format&dpr=1&w=1000"></a>
+    </body>
 </html>
