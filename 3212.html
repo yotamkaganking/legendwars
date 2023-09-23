@@ -23,8 +23,8 @@ async function connectToWallet() {
     }
 }
         // Use Web3.js to check NFT ownership
-const contractAddress = "0xYourNFTContractAddress";
-const tokenId = "123"; // Replace with the specific token ID you're checking
+const contractAddress = 0x495f947276749Ce646f68AC8c248420045cb7b5e";
+const tokenId = "85981471250526994033607020071111650266012072695229443008409035258682425837216"; // Replace with the specific token ID you're checking
 
 const contract = new web3.eth.Contract(contractAbi, contractAddress);
 const owner = await contract.methods.ownerOf(tokenId).call();
